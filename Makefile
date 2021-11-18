@@ -1,0 +1,1 @@
+ g++ src/main.cpp -I/inc -o test -std=c++11 -pthread
