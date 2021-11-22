@@ -40,6 +40,8 @@ public:
 
 private:
     int sockfd;
+    int clientid;
+    int connfdlist[10];
     struct sockaddr_in serverIP;
 };
 

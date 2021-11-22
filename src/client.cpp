@@ -29,19 +29,18 @@ int main()
         char sendbuffer[1024];
         memset(sendbuffer, 0, sizeof(sendbuffer));
         // int ret = recv(sockfd,buffer,sizeof(buffer),0);
-
-        cout << "Please Input:" << endl;
+        cout << "輸入訊息:" << endl;
         cin >> sendbuffer;
         send(sockfd, sendbuffer, sizeof(sendbuffer), 0);
         char recvbuf[1024];
         int ret = recv(sockfd, recvbuf, sizeof(recvbuf), 0);
         if (ret)
         {
-            cout << "recv serv:" << recvbuf << endl;
+            cout << "收到的訊息:" << recvbuf << endl;
         }
         else if (ret == 0)
         {
-            cout << "link failure!" << endl;
+            cout << "斷線" << endl;
             close(sockfd);
             break;
         }
