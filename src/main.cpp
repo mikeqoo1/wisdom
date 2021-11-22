@@ -2,7 +2,7 @@
 
 int main(int argc, char *argv[])
 {
-  Server serv(6666);
-  serv.servRun();
-  return 0;
+    Server serv(6666);
+    serv.servRun();
+    return 0;
 }
