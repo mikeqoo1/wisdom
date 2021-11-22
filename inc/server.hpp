@@ -32,6 +32,7 @@ public:
 
 public:
     int serverBind();
+    //maxbacklog指定監聽佇列大小，當有連線請求到來會進入此監聽佇列，連線請求被 accept() 後會離開監聽佇列，當佇列滿時，新的連線請求會返回錯誤
     int serverListen(int maxbacklog);
     void serverAccept();
     void thread_func(int connfd);

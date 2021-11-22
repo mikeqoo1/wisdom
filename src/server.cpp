@@ -30,6 +30,8 @@ void Server::serverAccept()
 //子執行緒入口func 負責收發msg
 void Server::thread_func(int connfd)
 {
+    int clientid = 0;
+    clientid++;
     //read msg & send msg
     while (1)
     {
@@ -38,16 +40,18 @@ void Server::thread_func(int connfd)
         int ret = recv(connfd, buffer, sizeof(buffer), 0);
         if (ret)
         {
-            cout << "ret clit:" << buffer << endl;
+            //商業邏輯可以塞這邊
+            cout << "客戶ID:" << clientid << "送的Msg:" << buffer << endl;
             char sendBuf[1024];
             memset(sendBuf, 0, sizeof(sendBuf));
             cout << "Please Input:" << endl;
             cin >> sendBuf;
+            cout << "Server回應給:" << clientid << "的Msg:" << buffer << endl;
             send(connfd, sendBuf, sizeof(sendBuf), 0);
         }
         else if (ret == 0)
         {
-            cout << "link failure!" << endl; //斷線
+            cout << "客戶" << clientid << "link failure!" << endl; //斷線
             close(connfd);
             break;
         }
