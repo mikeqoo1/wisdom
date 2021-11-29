@@ -28,13 +28,25 @@ void Server::serverAccept()
     }
 }
 
+int Server::serverSendAll(vector<int> &list, char *sendBuf)
+{
+    for (std::vector<int>::size_type i = 0; i < list.size(); i++)
+    {
+        send(list[i], sendBuf, 2048, 0);
+    }
+    return 0;
+}
+
 //子執行緒入口func 負責收發msg
 void Server::thread_func(int connfd)
 {
     clientid++;
     cout << "clientid=" << clientid << endl;
     int onlyID = clientid;
-    connfdlist[onlyID] = connfd;
+    //std::lock_guard<std::mutex> mylock_guard(my_lock); //加鎖，離開{}作用域後鎖釋放
+    my_lock.lock();
+    conn_list.push_back(connfd);
+    my_lock.unlock();
     //read msg & send msg
     while (1)
     {
@@ -51,12 +63,21 @@ void Server::thread_func(int connfd)
             // cin >> sendBuf;
             // cout << "Server回應給[" << onlyID << "]的Msg:" << sendBuf << endl;
             sprintf(sendBuf, "%s%d%s%s", "ID ", onlyID, " send msg is ", buffer);
-            send(connfd, sendBuf, sizeof(sendBuf), 0);
-            //廣播Msg
-            // for (int i = 0; i < 10; i++)
-            // {
-            //     send(connfdlist[i], sendBuf, sizeof(sendBuf), 0);
-            // }
+            cout << "sendBuf[" << sendBuf << "]" << endl;
+            //send(connfd, sendBuf, sizeof(sendBuf), 0);
+            //廣播訊息
+            int status = 0;
+            status = serverSendAll(conn_list, sendBuf);
+            if (status == 0)
+            {
+                cout << "^^ 廣播成功 YA~~" << endl;
+                continue;
+            }
+            else
+            {
+                cout << "QQ 廣播失敗 GG思密達" << endl;
+                break;
+            }
         }
         else if (ret == 0)
         {

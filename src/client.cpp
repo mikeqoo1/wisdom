@@ -26,13 +26,14 @@ int main()
 
     while (1)
     {
-        char sendbuffer[1024];
+        char sendbuffer[512];
         memset(sendbuffer, 0, sizeof(sendbuffer));
         // int ret = recv(sockfd,buffer,sizeof(buffer),0);
-        cout << "輸入訊息:" << endl;
+        cout << "輸入訊息:";
         cin >> sendbuffer;
         send(sockfd, sendbuffer, sizeof(sendbuffer), 0);
-        char recvbuf[1024];
+        char recvbuf[4096];
+        memset(recvbuf, 0, sizeof(recvbuf));
         int ret = recv(sockfd, recvbuf, sizeof(recvbuf), 0);
         if (ret)
         {

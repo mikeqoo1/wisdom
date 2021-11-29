@@ -17,3 +17,6 @@ server:
 	$(CC) $(C_FLAGS) $(INC) -o $(MAIN_OUTPUT) $(SRC)main.cpp $(SRC)server.cpp
 client:
 	$(CC) $(C_FLAGS) $(SRC)client.cpp -o client.out
+
+cl:
+	rm *.out
