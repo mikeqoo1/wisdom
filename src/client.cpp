@@ -13,9 +13,9 @@ using namespace std;
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 6666
 
-char name[NAME_LEN + 1]; //user's name
+char name[NAME_LEN + 1]; // user's name
 
-//receive message and print out
+// receive message and print out
 void *handle_recv(void *data)
 {
     int pipe = *(int *)data;
@@ -31,7 +31,7 @@ void *handle_recv(void *data)
     // receive
     while ((buffer_len = recv(pipe, buffer, BUFFER_LEN, 0)) > 0)
     {
-        //to find '\n' as the end of the message
+        // to find '\n' as the end of the message
         for (int i = 0; i < buffer_len; i++)
         {
             if (message_len == 0)
@@ -43,24 +43,24 @@ void *handle_recv(void *data)
 
             if (buffer[i] == '\n')
             {
-                //print out the message
+                // print out the message
                 cout << message_buffer << endl;
 
-                //new message start
+                // new message start
                 message_len = 0;
                 message_buffer.clear();
             }
         }
         memset(buffer, 0, sizeof(buffer));
     }
-    //because the recv() function is blocking, so when the while() loop break, it means the server is offline
+    // because the recv() function is blocking, so when the while() loop break, it means the server is offline
     printf("The Server has been shutdown!\n");
     return NULL;
 }
 
 int main()
 {
-    //create a socket to connect with the server
+    // create a socket to connect with the server
     int client_sock;
     if ((client_sock = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
@@ -70,16 +70,16 @@ int main()
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = inet_addr(SERVER_IP);
-    addr.sin_port = htons(SERVER_PORT); //127.0.0.1:8888
+    addr.sin_port = htons(SERVER_PORT); // 127.0.0.1:8888
 
-    //connect the server
+    // connect the server
     if (connect(client_sock, (struct sockaddr *)&addr, sizeof(addr)))
     {
         perror("connect");
         return -1;
     }
 
-    //check state
+    // check state
     printf("Connecting......");
     fflush(stdout);
     char state[10] = {0};
@@ -105,35 +105,35 @@ int main()
         printf("Please enter your name:");
         cin.get(name, NAME_LEN);
         int name_len = strlen(name);
-        //no input
+        // no input
         if (cin.eof())
         {
-            //reset
+            // reset
             cin.clear();
             clearerr(stdin);
             printf("\nYou need to input at least one word!\n");
             continue;
         }
-        //sigle enter
+        // sigle enter
         else if (name_len == 0)
         {
-            //reset
+            // reset
             cin.clear();
             clearerr(stdin);
             cin.get();
             continue;
             printf("\nYou need to input at least one word!\n");
         }
-        //overflow
+        // overflow
         if (name_len > NAME_LEN - 2)
         {
-            //reset
+            // reset
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             printf("\nReached the upper limit of the words!\n");
             continue;
         }
-        cin.get(); //remove '\n' in stdin
+        cin.get(); // remove '\n' in stdin
         name[name_len] = '\0';
         break;
     }
@@ -144,11 +144,11 @@ int main()
     }
     //////////////// get name ////////////////
 
-    //create a new thread to handle receive message
+    // create a new thread to handle receive message
     pthread_t recv_thread;
     pthread_create(&recv_thread, NULL, handle_recv, (void *)&client_sock);
 
-    //get message and send
+    // get message and send
     while (1)
     {
         char message[BUFFER_LEN + 1];
@@ -156,39 +156,39 @@ int main()
         int n = strlen(message);
         if (cin.eof())
         {
-            //reset
+            // reset
             cin.clear();
             clearerr(stdin);
             continue;
         }
-        //single enter
+        // single enter
         else if (n == 0)
         {
-            //reset
+            // reset
             cin.clear();
             clearerr(stdin);
         }
-        //overflow
+        // overflow
         if (n > BUFFER_LEN - 2)
         {
-            //reset
+            // reset
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             printf("Reached the upper limit of the words!\n");
             continue;
         }
-        cin.get();         //remove '\n' in stdin
-        message[n] = '\n'; //add '\n'
+        cin.get();         // remove '\n' in stdin
+        message[n] = '\n'; // add '\n'
         message[n + 1] = '\0';
-        //the length of message now is n+1
+        // the length of message now is n+1
         n++;
         printf("\n");
-        //the length of message that has been sent
+        // the length of message that has been sent
         int sent_len = 0;
-        //calculate one transfer length
+        // calculate one transfer length
         int trans_len = BUFFER_LEN > n ? n : BUFFER_LEN;
 
-        //send message
+        // send message
         while (n > 0)
         {
             int len = send(client_sock, message + sent_len, trans_len, 0);
@@ -197,12 +197,12 @@ int main()
                 perror("send");
                 return -1;
             }
-            //if one transfer has not sent the full message, then send the remain message
+            // if one transfer has not sent the full message, then send the remain message
             n -= len;
             sent_len += len;
             trans_len = BUFFER_LEN > n ? n : BUFFER_LEN;
         }
-        //clean the buffer
+        // clean the buffer
         memset(message, 0, sizeof(message));
     }
 
