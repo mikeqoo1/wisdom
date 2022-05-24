@@ -149,6 +149,7 @@ void *Server::chat(User_Client *data)
 
 int Server::servRun()
 {
+
     current_client_num = 0;
     if (bind(sockfd, (struct sockaddr *)&serverIP, sizeof(serverIP)))
     {
@@ -232,6 +233,27 @@ int Server::servRun()
                 my_chat_thread[i].detach();
 
                 printf("%s join in the chat room. Online User Number: %d\n", client[i].name, current_client_num);
+
+                std::cout << "Chatterbot v16.0 Copyright (C) 2010 Gonzales Cenelia\n"
+                          << std::endl;
+                try
+                {
+                    CBot bot("Chatterbot16");
+
+                    bot.signon();
+                    while (!bot.quit())
+                    {
+                        bot.get_input();
+                        bot.save_log("USER");
+                        bot.respond();
+                    }
+                    bot.save_unknown_input();
+                }
+                catch (std::string str)
+                {
+                    std::cerr << str << std::endl;
+                }
+
                 break;
             }
         }
