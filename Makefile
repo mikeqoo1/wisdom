@@ -14,7 +14,7 @@ MAIN_OUTPUT=server.out
 make: server client
 
 server:
-	$(CC) $(C_FLAGS) $(INC) -o $(MAIN_OUTPUT) $(SRC)main.cpp $(SRC)server.cpp
+	$(CC) $(C_FLAGS) $(INC) -o $(MAIN_OUTPUT) $(SRC)main.cpp $(SRC)server.cpp $(SRC)strings.cpp $(SRC)bot.cpp
 client:
 	$(CC) $(C_FLAGS) $(SRC)client.cpp -o client.out
 
